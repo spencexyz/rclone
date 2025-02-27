@@ -80,9 +80,10 @@ const (
 // Globals
 var (
 	// Description of how to auth for this app
-	driveConfig = &oauth2.Config{
+	driveConfig = &oauthutil.Config{
 		Scopes:       []string{scopePrefix + "drive"},
-		Endpoint:     google.Endpoint,
+		AuthURL:      google.Endpoint.AuthURL,
+		TokenURL:     google.Endpoint.TokenURL,
 		ClientID:     rcloneClientID,
 		ClientSecret: obscure.MustReveal(rcloneEncryptedClientSecret),
 		RedirectURL:  oauthutil.RedirectURL,
@@ -3805,6 +3806,28 @@ Usage:
 
     rclone backend moveid drive: ID path
 	rclone backend moveid drive: ID1 path1 ID2 path2
+
+It moves the drive file with ID given to the path (an rclone path which
+will be passed internally to rclone moveto).
+
+The path should end with a / to indicate move the file as named to
+this directory. If it doesn't end with a / then the last path
+component will be used as the file name.
+
+If the destination is a drive backend then server-side moving will be
+attempted if possible.
+
+Use the --interactive/-i or --dry-run flag to see what would be moved beforehand.
+`,
+}, {
+	Name:  "moveid",
+	Short: "Move files by ID",
+	Long: `This command moves files by ID
+
+Usage:
+
+    rclone backend moveid drive: ID path
+    rclone backend moveid drive: ID1 path1 ID2 path2
 
 It moves the drive file with ID given to the path (an rclone path which
 will be passed internally to rclone moveto).
